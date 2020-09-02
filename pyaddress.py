@@ -26,6 +26,8 @@ def get_address(cep: str, source: str) -> {}:
         url = f'https://ws.apicep.com/cep.json?code={cep}'
     elif source == 'postmon':
         url = f'https://api.postmon.com.br/v1/cep/{cep}'
+    elif source == 'viacep':
+        url = f'https://viacep.com.br/ws/{cep}/json/'
     else:
         raise ValueError('Source does not exist')
 
@@ -46,6 +48,7 @@ def process_addr(
 
     for col in addr.keys():
         aux.loc[row, col] = str(addr.get(col))
+    print(f'[INFO] {cep} processed')
 
     return aux
 
@@ -83,8 +86,8 @@ ap.add_argument(
     type=str,
     default='postmon',
     help=(
-        "source of download,types: ['pycep', 'webmania', 'apicep', 'postmon'],"
-        " default is postmon"
+        "source of download,types: ['pycep', 'webmania', 'apicep', 'postmon',"
+        "'viacep'], default is postmon"
     ),
 )
 ap.add_argument(
