@@ -37,7 +37,7 @@ def get_address(cep: str, source: str) -> {}:
 
     result = requests.get(url, headers=headers)
     if result.status_code == 200:
-        return result.json()
+        return dict(result.json())
     return {}
 
 
