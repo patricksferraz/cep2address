@@ -12,6 +12,8 @@ import os
 
 
 def get_address(cep: str, source: str) -> {}:
+    headers = {'Accept': 'application/json'}
+
     if source == 'pycep':
         return pc.get_address_from_cep(cep)
     elif source == 'webmania':
@@ -28,10 +30,12 @@ def get_address(cep: str, source: str) -> {}:
         url = f'https://api.postmon.com.br/v1/cep/{cep}'
     elif source == 'viacep':
         url = f'https://viacep.com.br/ws/{cep}/json/'
+    elif source == 'cepla':
+        url = f'http://cep.la/{cep}'
     else:
         raise ValueError('Source does not exist')
 
-    result = requests.get(url)
+    result = requests.get(url, headers=headers)
     if result.status_code == 200:
         return result.json()
     return {}
@@ -87,7 +91,7 @@ ap.add_argument(
     default='postmon',
     help=(
         "source of download,types: ['pycep', 'webmania', 'apicep', 'postmon',"
-        "'viacep'], default is postmon"
+        "'viacep', 'cepla'], default is postmon"
     ),
 )
 ap.add_argument(
