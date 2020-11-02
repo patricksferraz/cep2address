@@ -26,6 +26,14 @@ def get_address(cep: str, source: str) -> {}:
             f'?app_key={environ.get("APP_KEY")}'
             f'&app_secret={environ.get("APP_SECRET")}'
         )
+    elif source == 'geocode':
+        basedir = path.abspath(path.dirname(__file__))
+        load_dotenv(path.join(basedir, '.env'))
+        url = (
+            'https://maps.googleapis.com/maps/api/geocode/json'
+            f'?address={cep}'
+            f'&key={environ.get("API_KEY")}'
+        )
     elif source == 'apicep':
         url = f'https://ws.apicep.com/cep.json?code={cep}'
     elif source == 'postmon':
@@ -93,7 +101,7 @@ ap.add_argument(
     default='postmon',
     help=(
         "source of download,types: ['pycep', 'webmania', 'apicep', 'postmon',"
-        "'viacep', 'cepla'], default is postmon"
+        "'viacep', 'cepla', 'geocode'], default is postmon"
     ),
 )
 ap.add_argument(
@@ -118,7 +126,9 @@ if not os.path.exists('.process'):
 
 files = args.get('files')
 for file in files:
-    df = pd.read_csv(file, low_memory=False, compression=args.get('compress'))
+    df = pd.read_csv(
+        file, dtype=str, low_memory=False, compression=args.get('compress')
+    )
     pool = mp.Pool(mp.cpu_count())
     results = pool.starmap_async(
         process_addr,
